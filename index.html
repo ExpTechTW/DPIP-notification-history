@@ -177,6 +177,14 @@
             color: #999;
             margin-top: 12px;
         }
+
+        .history-item.faded {
+            opacity: 0.6;
+        }
+
+        .history-item.active {
+            border: 4.8px solid darkblue;
+        }
     </style>
 </head>
 
@@ -293,6 +301,29 @@
             }
         }
 
+        function showSpecificNotification(notification) {
+            const allHistoryItems = document.querySelectorAll('.history-item');
+            allHistoryItems.forEach(item => {
+                item.classList.add('faded');
+                item.classList.remove('active');
+            });
+
+            const notificationElement = document.getElementById(`notification-${notification.time}`);
+            if (notificationElement) {
+                notificationElement.classList.remove('faded');
+                notificationElement.classList.add('active');
+                activeNotification = notificationElement;
+                notificationElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+
+            highlightArea(notification.area);
+            showIphoneNotification(notification);
+
+            const newUrl = `${window.location.pathname}?id=${notification.time}`;
+            window.history.pushState({ id: notification.time }, '', newUrl);
+        }
+
+
         function displayNotifications(notifications) {
             notificationsContainer.innerHTML = '';
             notifications.reverse().forEach((notification) => {
@@ -300,32 +331,15 @@
                 notificationElement.className = 'history-item';
                 notificationElement.id = `notification-${notification.time}`;
                 notificationElement.innerHTML = `
-                    <h3>${notification.title}</h3>
-                    <p>${notification.body}</p>
-                    <div class="time">${new Date(notification.time).toLocaleString()}</div>
-                `;
+            <h3>${notification.title}</h3>
+            <p>${notification.body}</p>
+            <div class="time">${new Date(notification.time).toLocaleString()}</div>
+        `;
                 notificationElement.addEventListener('click', () => {
                     showSpecificNotification(notification);
                 });
                 notificationsContainer.appendChild(notificationElement);
             });
-        }
-
-        function showSpecificNotification(notification) {
-            if (activeNotification) {
-                activeNotification.classList.remove('active');
-            }
-            const notificationElement = document.getElementById(`notification-${notification.time}`);
-            if (notificationElement) {
-                notificationElement.classList.add('active');
-                activeNotification = notificationElement;
-                notificationElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
-            highlightArea(notification.area);
-            showIphoneNotification(notification);
-
-            const newUrl = `${window.location.pathname}?id=${notification.time}`;
-            window.history.pushState({ id: notification.time }, '', newUrl);
         }
 
         function showIphoneNotification(notification) {
