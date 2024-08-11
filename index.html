@@ -109,8 +109,8 @@
 
       .notification-icon {
         flex-shrink: 0;
-        width: 40px;
-        height: 40px;
+        width: 32px;
+        height: 32px;
         border-radius: 10px;
         margin-right: 15px;
         background-image: url("https://raw.githubusercontent.com/ExpTechTW/DPIP/main/assets/DPIP.png");
@@ -408,7 +408,7 @@
           notificationElement.id = `notification-${notification.time}`;
           notificationElement.innerHTML = `
             <h3>${notification.title}</h3>
-            <p>${notification.body}</p>
+            <p>${notification.body.replaceAll("\n", "<br>")}</p>
             <div class="time">${new Date(
               notification.time
             ).toLocaleString()}</div>
@@ -422,7 +422,8 @@
 
       function showIphoneNotification(notification) {
         iphoneNotification.querySelector("h3").textContent = notification.title;
-        iphoneNotification.querySelector("p").textContent = notification.body;
+        iphoneNotification.querySelector("p").innerHTML =
+          notification.body.replaceAll("\n", "<br>");
         iphoneNotification.classList.add("show");
       }
 
